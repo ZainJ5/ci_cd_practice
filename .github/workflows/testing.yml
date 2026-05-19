@@ -45,7 +45,7 @@ jobs:
           script: |
             cd /app
             cd frontend
-            npm install && npm run vite build
+            npm install && npm run dev
             cd ..
             cd backend
             npm install && npm start
