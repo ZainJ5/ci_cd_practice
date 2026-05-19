@@ -1,0 +1,51 @@
+name: testing
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install & test frontend
+        working-directory: ./frontend
+        run: |
+           npm install
+           npm run lint
+           npm run test
+
+      - name: Install & test backend
+        working-directory: ./backend
+        run: |
+           npm install
+           npm run lint
+           npm run test
+
+      - name: Copy files via SSH
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "./"
+          target: "/app"
+
+      - name: Execute remote SSH commands using key
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd /app
+            cd frontend
+            npm install && npm run vite build
+            cd ..
+            cd backend
+            npm install && npm start
