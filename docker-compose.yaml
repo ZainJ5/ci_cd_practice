@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: newsdb
+      POSTGRES_PASSWORD: pgadmin4
+      POSTGRES_DB: newsdb
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  frontend:
+     depends_on:
+       - backend
+     image: frontend
+     ports:
+       - "8084:4173"
+  backend:
+     depends_on: 
+       - db
+     image: backend
+     environment:
+       - DB_NAME=newsdb
+       - DB_USER=newsdb
+       - DB_PASSWORD=pgadmin4
+       - DB_HOST=db
+     ports:
+       - "8085:3000"
+volumes:
+  postgres_data:
