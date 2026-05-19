@@ -33,7 +33,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           source: "./"
-          target: "/app"
+          target: "~/app"
 
       - name: Execute remote SSH commands using key
         uses: appleboy/ssh-action@v1.0.0
@@ -43,7 +43,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            cd /app
+            cd ~/app
             cd frontend
             npm install && npm run dev
             cd ..
